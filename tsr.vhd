@@ -19,6 +19,8 @@ architecture tsr_struc of tsr is
 signal i_serial : std_logic_vector(7 downto 0);
 signal i_data : std_logic_vector(7 downto 0);
 signal i_serial_out : std_logic;
+signal i_serial_start, i_start_bit, i_start_in : std_logic;
+signal i_stop_bit, i_stop_in : std_logic;
 
 
 
@@ -28,6 +30,16 @@ component dflipflop is
 end component;
 
 begin 
+
+	-- DFF that holds the stop bit ('1') which is sent last to the TxD
+	stop_bit : dflipflop port map (
+		i_d => i_stop_in,
+		i_clk => clk,
+		i_rst => reset_bar,
+		o_q => i_serial(7)
+	);
+
+
 	-- DFF to hold bit 7 of data
 	bit7 : dflipflop port map (
 		i_d => i_data(7),
@@ -89,11 +101,22 @@ begin
 		i_d => i_data(0),
 		i_clk => clk,
 		i_rst => reset_bar,
-		o_q => i_serial_out
+		o_q => i_serial_start
 	);	
+	
+	-- DFF that holds the start bit ('0') which be sent to the TxD first
+	start_bit : dflipflop port map (
+		i_d => i_start_in,
+		i_clk => clk,
+		i_rst => reset_bar,
+		o_q => i_serial_out
+	);
+
+
 
 	-- Signal connections
-	i_serial(7) <= '1';
+	i_stop_bit <= '1';
+	i_stop_in <= (sh_ld_bar) or (not sh_ld_bar and i_stop_bit);
 	i_data(7) <= (sh_ld_bar and i_serial(7)) or (not sh_ld_bar and data_in(7));
 	i_data(6) <= (sh_ld_bar and i_serial(6)) or (not sh_ld_bar and data_in(6));
 	i_data(5) <= (sh_ld_bar and i_serial(5)) or (not sh_ld_bar and data_in(5));
@@ -102,6 +125,9 @@ begin
 	i_data(2) <= (sh_ld_bar and i_serial(2)) or (not sh_ld_bar and data_in(2));
 	i_data(1) <= (sh_ld_bar and i_serial(1)) or (not sh_ld_bar and data_in(1));
 	i_data(0) <= (sh_ld_bar and i_serial(0)) or (not sh_ld_bar and data_in(0));
+	i_start_bit <= '0';
+	i_start_in <= (sh_ld_bar and i_serial_start) or (not sh_ld_bar and i_start_bit);
+
 
 	-- Output Driver
 	data_out <= i_serial_out;
