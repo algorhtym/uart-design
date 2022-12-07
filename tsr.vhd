@@ -105,10 +105,12 @@ begin
 	);	
 	
 	-- DFF that holds the start bit ('0') which be sent to the TxD first
+	-- Note that for this component, reset_bar is connected to the i_set instead of
+	-- i_rst, to achieve high TxD signal on reset
 	start_bit : dflipflop port map (
 		i_d => i_start_in,
 		i_clk => clk,
-		i_rst => reset_bar,
+		i_set => reset_bar,
 		o_q => i_serial_out
 	);
 
