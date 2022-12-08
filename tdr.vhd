@@ -14,6 +14,7 @@ architecture tdr_struc of tdr is
 
 signal i_data, i_data_bar : std_logic_vector(7 downto 0);
 signal i_data_in : std_logic_vector(7 downto 0);
+signal i_load : std_logic;
 
 
 component dflipflop is
@@ -32,14 +33,16 @@ begin
 	-- D Latch to preserve bus input
 	l7 : dLatch port map (
 		i_d => data_in(7),
-		i_enable => load_bar,
-		o_q => i_data_in(7)
+		i_enable => i_load,
+		o_q => i_data_in(7),
+		o_qBar => open
 	);
 
 	-- DFF to hold bit 7 of data
 	bit7 : dflipflop port map (
 		i_d => i_data_in(7),
 		i_clk => clk,
+		i_set => '1',
 		i_rst => reset_bar,
 		o_q => i_data(7),
 		o_qbar => i_data_bar(7)
@@ -48,7 +51,7 @@ begin
 	-- D Latch to preserve bus input
 	l6 : dLatch port map (
 		i_d => data_in(6),
-		i_enable => load_bar,
+		i_enable => i_load,
 		o_q => i_data_in(6)
 	);
 
@@ -56,6 +59,7 @@ begin
 	bit6 : dflipflop port map (
 		i_d => i_data_in(6),
 		i_clk => clk,
+		i_set => '1',
 		i_rst => reset_bar,
 		o_q => i_data(6),
 		o_qbar => i_data_bar(6)
@@ -64,7 +68,7 @@ begin
 	-- D Latch to preserve bus input
 	l5 : dLatch port map (
 		i_d => data_in(5),
-		i_enable => load_bar,
+		i_enable => i_load,
 		o_q => i_data_in(5)
 	);
 
@@ -72,6 +76,7 @@ begin
 	bit5 : dflipflop port map (
 		i_d => i_data_in(5),
 		i_clk => clk,
+		i_set => '1',
 		i_rst => reset_bar,
 		o_q => i_data(5),
 		o_qbar => i_data_bar(5)
@@ -80,7 +85,7 @@ begin
 	-- D Latch to preserve bus input
 	l4 : dLatch port map (
 		i_d => data_in(4),
-		i_enable => load_bar,
+		i_enable => i_load,
 		o_q => i_data_in(4)
 	);
 
@@ -88,6 +93,7 @@ begin
 	bit4 : dflipflop port map (
 		i_d => i_data_in(4),
 		i_clk => clk,
+		i_set => '1',
 		i_rst => reset_bar,
 		o_q => i_data(4),
 		o_qbar => i_data_bar(4)
@@ -96,7 +102,7 @@ begin
 	-- D Latch to preserve bus input
 	l3 : dLatch port map (
 		i_d => data_in(3),
-		i_enable => load_bar,
+		i_enable => i_load,
 		o_q => i_data_in(3)
 	);
 
@@ -104,6 +110,7 @@ begin
 	bit3 : dflipflop port map (
 		i_d => i_data_in(3),
 		i_clk => clk,
+		i_set => '1',
 		i_rst => reset_bar,
 		o_q => i_data(3),
 		o_qbar => i_data_bar(3)
@@ -112,7 +119,7 @@ begin
 	-- D Latch to preserve bus input
 	l2 : dLatch port map (
 		i_d => data_in(2),
-		i_enable => load_bar,
+		i_enable => i_load,
 		o_q => i_data_in(2)
 	);
 
@@ -120,6 +127,7 @@ begin
 	bit2 : dflipflop port map (
 		i_d => i_data_in(2),
 		i_clk => clk,
+		i_set => '1',
 		i_rst => reset_bar,
 		o_q => i_data(2),
 		o_qbar => i_data_bar(2)
@@ -128,7 +136,7 @@ begin
 	-- D Latch to preserve bus input
 	l1 : dLatch port map (
 		i_d => data_in(1),
-		i_enable => load_bar,
+		i_enable => i_load,
 		o_q => i_data_in(1)
 	);
 
@@ -136,6 +144,7 @@ begin
 	bit1 : dflipflop port map (
 		i_d => i_data_in(1),
 		i_clk => clk,
+		i_set => '1',
 		i_rst => reset_bar,
 		o_q => i_data(1),
 		o_qbar => i_data_bar(1)
@@ -144,7 +153,7 @@ begin
 	-- D Latch to preserve bus input
 	l0 : dLatch port map (
 		i_d => data_in(0),
-		i_enable => load_bar,
+		i_enable => i_load,
 		o_q => i_data_in(0)
 	);
 
@@ -152,10 +161,14 @@ begin
 	bit0 : dflipflop port map (
 		i_d => i_data_in(0),
 		i_clk => clk,
+		i_set => '1',
 		i_rst => reset_bar,
 		o_q => i_data(0),
 		o_qbar => i_data_bar(0)
 	);
+	
+	-- Concurrent signal assignments 
+	i_load <= not load_bar;
 
 	-- Output Driver:
 	data_out <= i_data;

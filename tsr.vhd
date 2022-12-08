@@ -9,7 +9,7 @@ entity tsr is
 		reset_bar, sh_ld_bar : in std_logic;
 		clk : in std_logic;
 		data_in : in std_logic_vector(7 downto 0);
-		data_out, data_out_bar : out std_logic
+		data_out : out std_logic
 	);
 end tsr;
 
@@ -21,6 +21,7 @@ signal i_data : std_logic_vector(7 downto 0);
 signal i_serial_out : std_logic;
 signal i_serial_start, i_start_bit, i_start_in : std_logic;
 signal i_stop_bit, i_stop_in : std_logic;
+signal i_no_transmit : std_logic;
 
 
 
@@ -35,7 +36,8 @@ begin
 	stop_bit : dflipflop port map (
 		i_d => i_stop_in,
 		i_clk => clk,
-		i_rst => reset_bar,
+		i_set => reset_bar,
+		i_rst => '1',
 		o_q => i_serial(7)
 	);
 
@@ -44,7 +46,8 @@ begin
 	bit7 : dflipflop port map (
 		i_d => i_data(7),
 		i_clk => clk,
-		i_rst => reset_bar,
+		i_set => reset_bar,
+		i_rst => '1',
 		o_q => i_serial(6)
 	);
 
@@ -52,7 +55,8 @@ begin
 	bit6 : dflipflop port map (
 		i_d => i_data(6),
 		i_clk => clk,
-		i_rst => reset_bar,
+		i_set => reset_bar,
+		i_rst => '1',
 		o_q => i_serial(5)
 	);
 
@@ -60,7 +64,8 @@ begin
 	bit5 : dflipflop port map (
 		i_d => i_data(5),
 		i_clk => clk,
-		i_rst => reset_bar,
+		i_set => reset_bar,
+		i_rst => '1',
 		o_q => i_serial(4)
 	);
 
@@ -68,6 +73,7 @@ begin
 	bit4 : dflipflop port map (
 		i_d => i_data(4),
 		i_clk => clk,
+		i_set => '1',
 		i_rst => reset_bar,
 		o_q => i_serial(3)
 	);
@@ -76,7 +82,8 @@ begin
 	bit3 : dflipflop port map (
 		i_d => i_data(3),
 		i_clk => clk,
-		i_rst => reset_bar,
+		i_set => reset_bar,
+		i_rst => '1',
 		o_q => i_serial(2)
 	);
 
@@ -84,7 +91,8 @@ begin
 	bit2 : dflipflop port map (
 		i_d => i_data(2),
 		i_clk => clk,
-		i_rst => reset_bar,
+		i_set => reset_bar,
+		i_rst => '1',
 		o_q => i_serial(1)
 	);
 
@@ -92,7 +100,8 @@ begin
 	bit1 : dflipflop port map (
 		i_d => i_data(1),
 		i_clk => clk,
-		i_rst => reset_bar,
+		i_set => reset_bar,
+		i_rst => '1',
 		o_q => i_serial(0)
 	);
 
@@ -100,7 +109,8 @@ begin
 	bit0 : dflipflop port map (
 		i_d => i_data(0),
 		i_clk => clk,
-		i_rst => reset_bar,
+		i_set => reset_bar,
+		i_rst => '1',
 		o_q => i_serial_start
 	);	
 	
@@ -111,6 +121,7 @@ begin
 		i_d => i_start_in,
 		i_clk => clk,
 		i_set => reset_bar,
+		i_rst => '1',
 		o_q => i_serial_out
 	);
 
@@ -129,10 +140,10 @@ begin
 	i_data(0) <= (sh_ld_bar and i_serial(0)) or (not sh_ld_bar and data_in(0));
 	i_start_bit <= '0';
 	i_start_in <= (sh_ld_bar and i_serial_start) or (not sh_ld_bar and i_start_bit);
-
+  i_no_transmit <= '1';
 
 	-- Output Driver
-	data_out <= i_serial_out;
-	data_out_bar <= not i_serial_out;
+	data_out <= (i_serial_out and sh_ld_bar) or (i_no_transmit and not sh_ld_bar);
+	
 	
 end tsr_struc;
