@@ -51,18 +51,19 @@ begin
   begin
     test_sig <= '1';
     data_in_tb <= "01110011";
-    sh_ld_bar_tb <= '1';
+    sh_ld_bar_tb <= '0';
     reset_bar_tb <= '1';
     wait for clk_per * 2;
     reset_bar_tb <= '0';
     wait for clk_per * 2;
+    
     reset_bar_tb <= '1';
-    --wait for period * 3;
-    wait until reset_bar_tb <= '1';
-    --wait for clk_per;
-    -- load the registers 
-    sh_ld_bar_tb <= '0' after clk_per;
-    wait for clk_per;
+    
+    wait for clk_per * 2;   
+    
+    
+    --sh_ld_bar_tb <= '0';
+    
     -- start shifting
     sh_ld_bar_tb <= '1';
     wait for clk_per * 12; 
@@ -70,6 +71,7 @@ begin
     
     data_in_tb <= "01011001";
     wait for clk_per;
+    
     
     -- load the registers
     sh_ld_bar_tb <= '0';
@@ -79,7 +81,7 @@ begin
     wait for clk_per * 12;
     test_sig <= not test_sig;
     
-    data_in_tb <= "01011001";
+    data_in_tb <= "01111001";
     wait for clk_per;
     
     -- load the registers
